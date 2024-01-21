@@ -8,4 +8,4 @@ crate-type = ["cdylib"]
 
 [dependencies]
 wit-resource-fail = {path = "../.."}
-wit-bindgen = "0.16.0"
+wit-bindgen = { git = "https://github.com/bytecodealliance/wit-bindgen" }

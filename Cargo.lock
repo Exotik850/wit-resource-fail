@@ -2473,8 +2473,7 @@ dependencies = [
 [[package]]
 name = "wit-bindgen"
 version = "0.16.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "b76f1d099678b4f69402a421e888bbe71bf20320c2f3f3565d0e7484dbe5bc20"
+source = "git+https://github.com/bytecodealliance/wit-bindgen#523f56edacecc65782c47f017b36f7a85c83df8d"
 dependencies = [
  "bitflags 2.4.2",
  "wit-bindgen-rust-macro",
@@ -2483,8 +2482,7 @@ dependencies = [
 [[package]]
 name = "wit-bindgen-core"
 version = "0.16.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "75d55e1a488af2981fb0edac80d8d20a51ac36897a1bdef4abde33c29c1b6d0d"
+source = "git+https://github.com/bytecodealliance/wit-bindgen#523f56edacecc65782c47f017b36f7a85c83df8d"
 dependencies = [
  "anyhow",
  "wit-component",
@@ -2494,8 +2492,7 @@ dependencies = [
 [[package]]
 name = "wit-bindgen-rust"
 version = "0.16.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "a01ff9cae7bf5736750d94d91eb8a49f5e3a04aff1d1a3218287d9b2964510f8"
+source = "git+https://github.com/bytecodealliance/wit-bindgen#523f56edacecc65782c47f017b36f7a85c83df8d"
 dependencies = [
  "anyhow",
  "heck",
@@ -2507,8 +2504,7 @@ dependencies = [
 [[package]]
 name = "wit-bindgen-rust-macro"
 version = "0.16.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "804a98e2538393d47aa7da65a7348116d6ff403b426665152b70a168c0146d49"
+source = "git+https://github.com/bytecodealliance/wit-bindgen#523f56edacecc65782c47f017b36f7a85c83df8d"
 dependencies = [
  "anyhow",
  "proc-macro2",
@@ -2521,9 +2517,9 @@ dependencies = [
 
 [[package]]
 name = "wit-component"
-version = "0.18.2"
+version = "0.19.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "5b8a35a2a9992898c9d27f1664001860595a4bc99d32dd3599d547412e17d7e2"
+checksum = "429e3c06fba3a7566aab724ae3ffff3152ede5399d44789e7dd11f5421292859"
 dependencies = [
  "anyhow",
  "bitflags 2.4.2",
@@ -2532,9 +2528,9 @@ dependencies = [
  "serde",
  "serde_derive",
  "serde_json",
- "wasm-encoder 0.38.1",
+ "wasm-encoder 0.39.0",
  "wasm-metadata",
- "wasmparser 0.118.1",
+ "wasmparser 0.119.0",
  "wit-parser",
 ]
 

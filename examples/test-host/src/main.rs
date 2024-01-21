@@ -1,26 +1,12 @@
 use slab::Slab;
 use wasmtime::{component::*, Store};
 use wasmtime::{Config, Engine, Result};
-use wasmtime_wasi::preview2::{Table, WasiCtx, WasiView, WasiCtxBuilder};
+use wasmtime_wasi::preview2::{Table, WasiCtx, WasiCtxBuilder, WasiView};
 
 use plugins::main::imports::Host;
 use plugins::main::toml::{Host as TomlHost, HostToml, Toml, TomlValue};
 
 use async_trait::async_trait;
-
-impl Clone for TomlValue {
-    fn clone(&self) -> Self {
-        match self {
-            TomlValue::String(string) => TomlValue::String(string.clone()),
-            TomlValue::Table(table) => TomlValue::Table(
-                table
-                    .iter()
-                    .map(|(key, val)| (key.clone(), Resource::new_own(val.rep())))
-                    .collect(),
-            ),
-        }
-    }
-}
 
 struct PluginState {
     pub table: Table,
@@ -41,19 +27,35 @@ impl TomlHost for PluginState {}
 #[async_trait]
 impl HostToml for PluginState {
     async fn new(&mut self, value: TomlValue) -> Result<Resource<Toml>> {
+        println!("INSERTING TOML : {:?}", &value);
         let key = self.slab.insert(value);
+        println!("New Resource : {key}");
         Ok(Resource::new_own(key as u32))
     }
 
     async fn get(&mut self, value: Resource<Toml>) -> Result<TomlValue> {
-        Ok(self.slab.get(value.rep() as usize).cloned().unwrap())
-    }
+      println!("GETTING TOML {value:?} \n {:?}", &self.slab);
+      let out = match self
+          .slab
+          .get(value.rep() as usize)
+          .expect("Resource gaurantees existence")
+      {
+          TomlValue::String(string) => TomlValue::String(string.clone()),
+          TomlValue::Table(table) => TomlValue::Table(
+              table
+                  .iter()
+                  .map(|(key, val)| (key.clone(), Resource::new_own(val.rep())))
+                  .collect(),
+          ),
+      };
+      Ok(out)
+  }
 
-    fn drop(&mut self, res_toml: Resource<Toml>) -> Result<()> {
-        let key = res_toml.rep() as usize;
-        if res_toml.owned() && self.slab.contains(key) {
-            self.slab.remove(key);
-        }
+    fn drop(&mut self, _res_toml: Resource<Toml>) -> Result<()> {
+        // let key = res_toml.rep() as usize;
+        // if res_toml.owned() && self.slab.contains(key) {
+        //     self.slab.remove(key);
+        // }
         Ok(())
     }
 }
@@ -81,18 +83,27 @@ async fn run() {
         .build();
 
     let table = Table::new();
-    let mut store = Store::new(&engine, PluginState {
-      table, ctx, slab: Slab::new()
-    });
+    let mut store = Store::new(
+        &engine,
+        PluginState {
+            table,
+            ctx,
+            slab: Slab::new(),
+        },
+    );
 
-    let (bindings, instance) =
-    PluginWorld::instantiate_async(&mut store, &component, &linker).await.unwrap();
+    let (bindings, _instance) = PluginWorld::instantiate_async(&mut store, &component, &linker)
+        .await
+        .unwrap();
 
-    let resource = bindings.plugins_main_definitions().call_run(&mut store).await.unwrap();
+    let resource = bindings
+        .plugins_main_definitions()
+        .call_run(&mut store)
+        .await
+        .unwrap();
     let value = store.data_mut().slab.get(resource.rep() as usize).unwrap();
 
     println!("{value:?}")
-
 }
 
 impl WasiView for PluginState {
@@ -119,5 +130,5 @@ bindgen!({
 });
 
 fn main() {
-  smol::block_on(run());
+    smol::block_on(run());
 }

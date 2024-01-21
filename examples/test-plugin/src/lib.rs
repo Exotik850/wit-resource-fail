@@ -9,12 +9,21 @@ struct Plugin;
 
 impl Guest for Plugin {
     fn run() -> Toml {
-        let values = vec![(
-            "Test".into(),
-            Toml::new(TomlValue::String("THIS A TEST".into())),
+        // let val = TomlValue::String("THIS A TEST".to_string());
+
+        let val = "THIS A TEST".to_string();
+        log(&val);
+        let val = TomlValue::String(val);
+        
+        let key = "Test".to_string();
+        log(&key);
+
+        let values: Vec<(String, Toml)> = vec![(
+            key,
+            Toml::new(val),
         )];
 
-        let table = TomlValue::Table(values); // The error occurs here
+        let table = TomlValue::Table(values);
 
         let toml = Toml::new(table);
         let value = toml.get();
